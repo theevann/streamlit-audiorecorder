@@ -6,7 +6,7 @@ audio = audiorecorder("Click to record", "Recording...")
 
 if len(audio) > 0:
     # To play audio in frontend:
-    st.audio(audio)
+    st.audio(audio.tobytes())
     
     # To save audio to a file:
     wav_file = open("audio.mp3", "wb")

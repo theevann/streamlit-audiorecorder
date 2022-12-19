@@ -1,4 +1,5 @@
 # Audio Recorder for streamlit
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://theevann-streamlit-audiorecorder-exampleexample-5ds2ug.streamlitapp.com)
 
 Audio recorder component for streamlit.  
 It creates a button: one click to start recording, one click to stop recording.  
