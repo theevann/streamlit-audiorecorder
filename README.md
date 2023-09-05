@@ -3,13 +3,15 @@
 
 Audio recorder component for streamlit.  
 It creates a button: one click to start recording, one click to stop recording.  
-The return value is a numpy array.
-After conversion to bytes using `.tobytes()`, it can be passed to `st.audio` or written to disk as an audio file.
+The component's return value is a [pydub](https://github.com/jiaaro/pydub/) [AudioSegment](https://github.com/jiaaro/pydub/blob/master/API.markdown#audiosegment).  
+To play the audio in the frontend, use `st.audio(audio.export().read())`.  
+All pydub AudioSegment methods are available, so you can save the audio to a file with `audio.export("audio.wav", format="wav")` for example.
 
 ### Install it with pip:
 ```bash
 pip install streamlit-audiorecorder
 ```
+Note: This package uses pydub which uses ffmpeg, so both should be installed for this audiorecorder to work properly.
 
 ### Use it:
 ```python
@@ -17,13 +19,15 @@ import streamlit as st
 from audiorecorder import audiorecorder
 
 st.title("Audio Recorder")
-audio = audiorecorder("Click to record", "Recording...")
+audio = audiorecorder("Click to record", "Click to stop recording")
 
-if len(audio) > 0:
+if not audio.empty():
     # To play audio in frontend:
-    st.audio(audio.tobytes())
-    
-    # To save audio to a file:
-    wav_file = open("audio.mp3", "wb")
-    wav_file.write(audio.tobytes())
+    st.audio(audio.export().read())  
+
+    # To save audio to a file, use pydub export method:
+    audio.export("audio.wav", format="wav")
+
+    # To get audio properties, use pydub AudioSegment properties:
+    st.write(f"Frame rate: {audio.frame_rate}, Frame width: {audio.frame_width}, Duration: {audio.duration_seconds} seconds")
 ```
