@@ -13,6 +13,9 @@ pip install streamlit-audiorecorder
 ```
 Note: This package uses pydub which uses ffmpeg, so both should be installed for this audiorecorder to work properly.
 
+On ubuntu/debian: `sudo apt update && sudo apt install ffmpeg`  
+On mac: `brew install ffmpeg`
+
 ### Use it:
 ```python
 import streamlit as st
