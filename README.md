@@ -34,3 +34,23 @@ if not audio.empty():
     # To get audio properties, use pydub AudioSegment properties:
     st.write(f"Frame rate: {audio.frame_rate}, Frame width: {audio.frame_width}, Duration: {audio.duration_seconds} seconds")
 ```
+
+---
+### Troubleshooting:
+
+**Error**: No record button is shown and you get the following error message in the console:
+ ```
+ Component Error
+ Cannot read properties of undefined (reading 'getUserMedia')
+ ```
+**Reason**: To record the audio, this component is using the `MediaDevices` interface.  
+For security reasons, the `getUserMedia()` method is available only in secure contexts (HTTPS), as explained in the
+[MDM documentation](https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia) :
+
+> As an API that may involve significant privacy concerns, getUserMedia()'s specification lays out a wide array of privacy and security requirements that browsers are obligated to meet.
+> 
+> getUserMedia() is a powerful feature that can only be used in secure contexts; in insecure contexts, navigator.mediaDevices is undefined, preventing access to getUserMedia(). A secure context is, in short, a page loaded using HTTPS or the file:/// URL scheme, or a page loaded from localhost.
+
+**Solution**: Serve your website using HTTPS. If you are serving your website locally, make sure to access it using `localhost`, not an IP address.
+
+
