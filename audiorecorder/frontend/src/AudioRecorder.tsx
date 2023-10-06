@@ -6,9 +6,9 @@ import {
 import React, { ReactNode } from "react"
 
 interface State {
-  recording: boolean,
   recorder: MediaRecorder | null,
-  isHovered: boolean,
+  isHoveredStart: boolean,
+  isHoveredStop: boolean,
 }
 
 function BlobToDataURL(blob: Blob) {
@@ -20,7 +20,7 @@ function BlobToDataURL(blob: Blob) {
 }
 
 class AudioRecorder extends StreamlitComponentBase<State> {
-  public state:State = { recording: false, recorder: null, isHovered: false };
+  public state:State = { recorder: null, isHoveredStart: false, isHoveredStop: false };
 
   public componentDidMount(): void {
     navigator.mediaDevices.getUserMedia({ audio: true })
@@ -40,50 +40,66 @@ class AudioRecorder extends StreamlitComponentBase<State> {
     });
   }
 
-  handleMouseEnter = () => {
-    this.setState({ isHovered: true });
-  };
-
-  handleMouseLeave = () => {
-    this.setState({ isHovered: false });
-  };
-
   public render = (): ReactNode => {
-    const {record_prompt, recording_prompt} = this.props.args;
+    const {start_prompt, stop_prompt, pause_prompt} = this.props.args;
 
     return (
-      <span>        
+      <span>
         <button
-          onClick={this.onClicked}
+          onClick={this.toggleRecording}
           disabled={this.props.disabled}
           className="btn btn-outline-secondary"
           style={{
+            display: this.state.recorder?.state !== "recording" || pause_prompt !== "" ? "inline-block" : "none",
             marginBottom: "1px",
+            marginRight: "10px",
             color: this.props.theme?.textColor,
-            backgroundColor: this.state.isHovered ? this.props.theme?.secondaryBackgroundColor : this.props.theme?.backgroundColor,
+            backgroundColor: this.state.isHoveredStart ? this.props.theme?.secondaryBackgroundColor : this.props.theme?.backgroundColor,
             borderColor: this.props.theme?.textColor,
             fontFamily: this.props.theme?.font,
           }}
-          onMouseEnter={this.handleMouseEnter}
-          onMouseLeave={this.handleMouseLeave}
+          onMouseEnter={() => this.setState({ isHoveredStart: true })}
+          onMouseLeave={() => this.setState({ isHoveredStart: false })}
         >
-          {this.state.recording ? recording_prompt : record_prompt}
+          {this.state.recorder?.state === "recording" ? pause_prompt : start_prompt}
+        </button>
+        <button
+          onClick={this.stopRecording}
+          disabled={this.props.disabled || this.state.recorder?.state === "inactive"}
+          className="btn btn-outline-secondary"
+          style={{
+            display: this.state.recorder?.state !== "inactive" ? "inline-block" : "none",
+            marginBottom: "1px",
+            color: this.props.theme?.textColor,
+            backgroundColor: this.state.isHoveredStop ? this.props.theme?.secondaryBackgroundColor : this.props.theme?.backgroundColor,
+            borderColor: this.props.theme?.textColor,
+            fontFamily: this.props.theme?.font,
+          }}
+          onMouseEnter={() => this.setState({ isHoveredStop: true })}
+          onMouseLeave={() => this.setState({ isHoveredStop: false })}
+        >
+          {stop_prompt}
         </button>
       </span>
     )
   }
 
-  private onClicked = (): void => {
+  private toggleRecording = (): void => {
     const recorder = this.state.recorder as MediaRecorder;
-    if (this.state.recording) {
-      recorder.stop();
+    if (recorder.state === "recording") {
+      recorder.pause();
+    } else if (recorder.state === "paused") {
+      recorder.resume();
     } else {
       recorder.start();
     }
+    this.forceUpdate();
+  }
 
-    this.setState(
-      prevState => ({ recording: !prevState.recording }),
-    )
+  private stopRecording = (): void => {
+    const recorder = this.state.recorder as MediaRecorder;
+    recorder.stop();
+    this.forceUpdate();
   }
 }
 

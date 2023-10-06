@@ -19,8 +19,8 @@ else:
     _component_func = components.declare_component("audiorecorder", path=build_dir)
 
 
-def audiorecorder(record_prompt="Start recording", recording_prompt="Stop recording", key=None):
-    base64_audio = _component_func(record_prompt=record_prompt, recording_prompt=recording_prompt, key=key, default=b"")
+def audiorecorder(start_prompt="Start recording", stop_prompt="Stop recording", pause_prompt="", key=None):
+    base64_audio = _component_func(start_prompt=start_prompt, stop_prompt=stop_prompt, pause_prompt=pause_prompt, key=key, default=b"")
     audio_segment = AudioSegment.empty()
     if len(base64_audio) > 0:
          # Firefox and Chrome handle webm but Safari doesn't, so we let pydub/ffmpeg figure out the format
@@ -33,9 +33,9 @@ if not _RELEASE:
     import streamlit as st
 
     st.subheader("Audio Recorder Test")
-    audio = audiorecorder("Click to record", "Click to stop recording")
+    audio = audiorecorder("Click to record", "Click to stop recording", "Click to pause")
 
-    if not audio.empty():
+    if len(audio) > 0:
         # To play the audio in the frontend
         st.audio(audio.export().read())
 

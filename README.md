@@ -2,7 +2,8 @@
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://theevann-streamlit-audiorecorder-exampleexample-5ds2ug.streamlitapp.com)
 
 Audio recorder component for streamlit.  
-It creates a button: one click to start recording, one click to stop recording.  
+It creates a button to start the recording and takes three arguments: the start button text, the stop button text, and the pause button text.  
+If the pause button text is not specified, the pause button is not displayed.
 The component's return value is a [pydub](https://github.com/jiaaro/pydub/) [AudioSegment](https://github.com/jiaaro/pydub/blob/master/API.markdown#audiosegment).  
 To play the audio in the frontend, use `st.audio(audio.export().read())`.  
 All pydub AudioSegment methods are available, so you can save the audio to a file with `audio.export("audio.wav", format="wav")` for example.
@@ -11,7 +12,7 @@ All pydub AudioSegment methods are available, so you can save the audio to a fil
 ```bash
 pip install streamlit-audiorecorder
 ```
-Note: This package uses pydub which uses ffmpeg, so both should be installed for this audiorecorder to work properly.
+Note: This package uses ffmpeg, so it should be installed for this audiorecorder to work properly.
 
 On ubuntu/debian: `sudo apt update && sudo apt install ffmpeg`  
 On mac: `brew install ffmpeg`
@@ -24,7 +25,7 @@ from audiorecorder import audiorecorder
 st.title("Audio Recorder")
 audio = audiorecorder("Click to record", "Click to stop recording")
 
-if not audio.empty():
+if len(audio) > 0:
     # To play audio in frontend:
     st.audio(audio.export().read())  
 
