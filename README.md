@@ -4,6 +4,7 @@
 Audio recorder component for streamlit.  
 It creates a button to start the recording and takes three arguments: the start button text, the stop button text, and the pause button text.  
 If the pause button text is not specified, the pause button is not displayed.
+
 The component's return value is a [pydub](https://github.com/jiaaro/pydub/) [AudioSegment](https://github.com/jiaaro/pydub/blob/master/API.markdown#audiosegment).  
 To play the audio in the frontend, use `st.audio(audio.export().read())`.  
 All pydub AudioSegment methods are available, so you can save the audio to a file with `audio.export("audio.wav", format="wav")` for example.
