@@ -1,5 +1,5 @@
 # Audio Recorder for streamlit
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://theevann-streamlit-audiorecorder-exampleexample-5ds2ug.streamlitapp.com)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://audio-recorder.streamlit.app)
 
 Audio recorder component for streamlit.  
 It creates a button to start the recording and takes three arguments: the start button text, the stop button text, and the pause button text.  
