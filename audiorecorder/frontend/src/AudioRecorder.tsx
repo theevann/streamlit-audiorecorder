@@ -1,106 +1,110 @@
+import React, { useEffect, useState } from "react"
 import {
   Streamlit,
-  StreamlitComponentBase,
   withStreamlitConnection,
 } from "streamlit-component-lib"
-import React, { ReactNode } from "react"
+import { AudioRecorder as AudioRecorderVisualiser, useAudioRecorder } from '@theevann/react-audio-voice-recorder';
 
-interface State {
-  recorder: MediaRecorder | null,
-  isHoveredStart: boolean,
-  isHoveredStop: boolean,
-}
 
-function BlobToDataURL(blob: Blob) {
+function BlobToDataURL(blob: Blob): Promise<string>{
+  debugger;
   return new Promise(resolve => {
-      const reader = new FileReader();
-      reader.addEventListener("loadend", () => resolve(reader.result as string));
-      reader.readAsDataURL(blob);
-  }) as Promise<string>;
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result as string);
+    reader.readAsDataURL(blob);
+  });
 }
 
-class AudioRecorder extends StreamlitComponentBase<State> {
-  public state:State = { recorder: null, isHoveredStart: false, isHoveredStop: false };
+function AudioRecorder(props: any) {
+  const [isHoveredStart, setIsHoveredStart] = useState(false);
+  const [isHoveredStop, setIsHoveredStop] = useState(false);
+  const [buttonClicked, setButtonClicked] = useState(false);
 
-  public componentDidMount(): void {
-    navigator.mediaDevices.getUserMedia({ audio: true })
-      .then((mediaStreamObj) => {
-      const options = {
-        // audioBitsPerSecond: 24000,
-        // sampleSize: 16,
-        // mimeType: "audio/webm",
-      };
-      const recorder = new MediaRecorder(mediaStreamObj, options);
-      this.setState({ recorder });
+  const recorderControls = useAudioRecorder();
 
-      recorder.ondataavailable = async ({ data }) => {
-        const audioData_str = (await BlobToDataURL(data)).replace(/^data:.+?base64,/, "");
-        Streamlit.setComponentValue(audioData_str);
-      }
-    });
-  }
+  const onRecordingComplete = async (blob: Blob) => {
+    const audioDataStr = (await BlobToDataURL(blob)).replace(/^data:.+?base64,/, "");
+    Streamlit.setComponentValue(audioDataStr);
+  };
 
-  public render = (): ReactNode => {
-    const {start_prompt, stop_prompt, pause_prompt} = this.props.args;
+  useEffect(() => {
+    // Component did mount
+    Streamlit.setFrameHeight();
 
-    return (
-      <span>
-        <button
-          onClick={this.toggleRecording}
-          disabled={this.props.disabled}
-          className="btn btn-outline-secondary"
-          style={{
-            display: this.state.recorder?.state !== "recording" || pause_prompt !== "" ? "inline-block" : "none",
-            marginBottom: "1px",
-            marginRight: "10px",
-            color: this.props.theme?.textColor,
-            backgroundColor: this.state.isHoveredStart ? this.props.theme?.secondaryBackgroundColor : this.props.theme?.backgroundColor,
-            borderColor: this.props.theme?.textColor,
-            fontFamily: this.props.theme?.font,
-          }}
-          onMouseEnter={() => this.setState({ isHoveredStart: true })}
-          onMouseLeave={() => this.setState({ isHoveredStart: false })}
-        >
-          {this.state.recorder?.state === "recording" ? pause_prompt : start_prompt}
-        </button>
-        <button
-          onClick={this.stopRecording}
-          disabled={this.props.disabled || this.state.recorder?.state === "inactive"}
-          className="btn btn-outline-secondary"
-          style={{
-            display: this.state.recorder?.state !== "inactive" ? "inline-block" : "none",
-            marginBottom: "1px",
-            color: this.props.theme?.textColor,
-            backgroundColor: this.state.isHoveredStop ? this.props.theme?.secondaryBackgroundColor : this.props.theme?.backgroundColor,
-            borderColor: this.props.theme?.textColor,
-            fontFamily: this.props.theme?.font,
-          }}
-          onMouseEnter={() => this.setState({ isHoveredStop: true })}
-          onMouseLeave={() => this.setState({ isHoveredStop: false })}
-        >
-          {stop_prompt}
-        </button>
-      </span>
-    )
-  }
+    // mimic componentDidUpdate if necessary
+    const resizeListener = () => {
+      Streamlit.setFrameHeight();
+    };
 
-  private toggleRecording = (): void => {
-    const recorder = this.state.recorder as MediaRecorder;
-    if (recorder.state === "recording") {
-      recorder.pause();
-    } else if (recorder.state === "paused") {
-      recorder.resume();
-    } else {
-      recorder.start();
+    window.addEventListener('resize', resizeListener);
+
+    // Component will unmount
+    return () => { window.removeEventListener('resize', resizeListener); };
+  }, []);
+
+  useEffect(() => {
+    if (buttonClicked && recorderControls.recordingBlob) {
+      onRecordingComplete(recorderControls.recordingBlob);
+      setButtonClicked(false);  // Reset the flag after calling the function
     }
-    this.forceUpdate();
-  }
+  }, [recorderControls.recordingBlob, buttonClicked]);
 
-  private stopRecording = (): void => {
-    const recorder = this.state.recorder as MediaRecorder;
-    recorder.stop();
-    this.forceUpdate();
-  }
+  return props.args.start_prompt !== "" || props.args.stop_prompt !== "" ? (
+    <span>
+      <button
+        onClick={() => {
+          if (recorderControls.isRecording) {
+            recorderControls.togglePauseResume();
+          } else {
+            recorderControls.startRecording();
+          }
+        }}
+        disabled={props.disabled}
+        className="btn btn-outline-secondary"
+        style={{
+          display: (!recorderControls.isRecording || props.args.pause_prompt !== "") ? "inline-block" : "none",
+          marginBottom: "1px",
+          marginRight: "10px",
+          color: props.theme?.textColor,
+          backgroundColor: isHoveredStart ? props.theme?.secondaryBackgroundColor : props.theme?.backgroundColor,
+          borderColor: props.theme?.textColor,
+          fontFamily: props.theme?.font,
+        }}
+        onMouseEnter={() => setIsHoveredStart(true)}
+        onMouseLeave={() => setIsHoveredStart(false)}
+      >
+        {recorderControls.isRecording && !recorderControls.isPaused ? props.args.pause_prompt : props.args.start_prompt}
+      </button>
+      <button
+        onClick={() => {
+          recorderControls.stopRecording();
+          setButtonClicked(true);  // Set the flag to true when button is clicked
+        }}
+        disabled={props.disabled || (!recorderControls.isRecording && !recorderControls.isPaused)}
+        className="btn btn-outline-secondary"
+        style={{
+          display: (recorderControls.isRecording || recorderControls.isPaused) ? "inline-block" : "none",
+          marginBottom: "1px",
+          color: props.theme?.textColor,
+          backgroundColor: isHoveredStop ? props.theme?.secondaryBackgroundColor : props.theme?.backgroundColor,
+          borderColor: props.theme?.textColor,
+          fontFamily: props.theme?.font,
+        }}
+        onMouseEnter={() => setIsHoveredStop(true)}
+        onMouseLeave={() => setIsHoveredStop(false)}
+      >
+        {props.args.stop_prompt}
+      </button>
+    </span>
+  ) : (
+      <div style={{ padding: "5px" }}>
+        <AudioRecorderVisualiser
+          onRecordingComplete={onRecordingComplete}
+          recorderControls={recorderControls}
+          showVisualizer={props.args.show_visualizer}
+        />
+      </div>
+  );
 }
 
-export default withStreamlitConnection(AudioRecorder)
+export default withStreamlitConnection(AudioRecorder);

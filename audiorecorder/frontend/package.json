@@ -7,7 +7,12 @@
     "@types/jest": "^24.0.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "streamlit-component-lib": "^2.0.0"
+    "streamlit-component-lib": "^2.0.0",
+    "@theevann/react-audio-voice-recorder" : "2.2.2"
+  },
+  "resolutions": {
+    "@types/react": "17.0.14",
+    "@types/react-dom": "17.0.14"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -33,8 +38,8 @@
   "homepage": ".",
   "devDependencies": {
     "@types/node": "^12.0.0",
-    "@types/react": "^16.9.0",
-    "@types/react-dom": "^16.9.0",
+    "@types/react": "17.0.14",
+    "@types/react-dom": "17.0.14",
     "react-scripts": "^5.0.1",
     "typescript": "^4.2.0",
     "@babel/plugin-proposal-private-property-in-object": "^7.14.5"
