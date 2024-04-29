@@ -18,9 +18,10 @@ function BlobToDataURL(blob: Blob): Promise<string>{
 function AudioRecorder(props: any) {
   const [isHoveredStart, setIsHoveredStart] = useState(false);
   const [isHoveredStop, setIsHoveredStop] = useState(false);
-  const [buttonClicked, setButtonClicked] = useState(false);
 
   const recorderControls = useAudioRecorder();
+
+  const useAudioRecorderVisualiser = props.args.start_prompt === "" && props.args.stop_prompt === "";
 
   const onRecordingComplete = async (blob: Blob) => {
     const audioDataStr = (await BlobToDataURL(blob)).replace(/^data:.+?base64,/, "");
@@ -43,13 +44,13 @@ function AudioRecorder(props: any) {
   }, []);
 
   useEffect(() => {
-    if (buttonClicked && recorderControls.recordingBlob) {
+    if (!useAudioRecorderVisualiser && recorderControls.recordingBlob) {
       onRecordingComplete(recorderControls.recordingBlob);
-      setButtonClicked(false);  // Reset the flag after calling the function
     }
-  }, [recorderControls.recordingBlob, buttonClicked]);
+  }, [recorderControls.recordingBlob, useAudioRecorderVisualiser]);
 
-  return props.args.start_prompt !== "" || props.args.stop_prompt !== "" ? (
+
+  return !useAudioRecorderVisualiser ? (
     <span>
       <button
         onClick={() => {
@@ -76,10 +77,7 @@ function AudioRecorder(props: any) {
         {recorderControls.isRecording && !recorderControls.isPaused ? props.args.pause_prompt : props.args.start_prompt}
       </button>
       <button
-        onClick={() => {
-          recorderControls.stopRecording();
-          setButtonClicked(true);  // Set the flag to true when button is clicked
-        }}
+        onClick={recorderControls.stopRecording}
         disabled={props.disabled || (!recorderControls.isRecording && !recorderControls.isPaused)}
         className="btn btn-outline-secondary"
         style={{

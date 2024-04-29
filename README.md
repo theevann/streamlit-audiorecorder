@@ -8,16 +8,24 @@ Audio recorder component for streamlit.
 It creates a button to start the recording and takes three arguments: the start button text, the stop button text, and the pause button text.  
 If the pause button text is not specified, the pause button is not displayed.
 
+![Example with buttons](images/buttons.gif)
+
+If all prompts are given as empty strings, the component will use the [react-audio-recorder](https://github.com/samhirtarif/react-audio-recorder) visualizer:
+
+![Example with the visualiser](images/visualiser.gif)
+
 #### Parameters
 The signature of the component is:
 ```python
-audiorecorder(start_prompt="Start recording", stop_prompt="Stop recording", pause_prompt="", key=None):
+audiorecorder(start_prompt="Start recording", stop_prompt="Stop recording", pause_prompt="", show_visualizer=True, key=None):
 ```
-The prompt parameters are self-explanatory, and the optionnal `key` parameter is used internally by streamlit to properly distinguish multiple audiorecorders on the page.
+The prompt parameters are self-explanatory.  
+The optional `key` parameter is used internally by Streamlit to properly distinguish multiple audiorecorders on the page.  
+The `show_visualizer` parameter is a boolean that determines whether to show live audio visualization while recording. If set to False, the text "recording" is displayed. It is used only when all prompts are empty strings.
 
 #### Return value
 The component's return value is a [pydub](https://github.com/jiaaro/pydub/) [`AudioSegment`](https://github.com/jiaaro/pydub/blob/master/API.markdown#audiosegment).  
-All `AudioSegment` methods are available, in particular you can:
+All `AudioSegment` methods are available. In particular, you can:
 - Play the audio in the frontend with `st.audio(audio.export().read())`
 - Save the audio to a file with `audio.export("audio.wav", format="wav")`
 
@@ -27,8 +35,8 @@ pip install streamlit-audiorecorder
 ```
 Note: This package uses ffmpeg, so it should be installed for this audiorecorder to work properly.
 
-On ubuntu/debian: `sudo apt update && sudo apt install ffmpeg`  
-On mac: `brew install ffmpeg`
+On Ubuntu/Debian: `sudo apt update && sudo apt install ffmpeg`  
+On Mac: `brew install ffmpeg`
 
 ### Usage:
 ```python
