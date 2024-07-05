@@ -65,7 +65,7 @@ if len(audio) > 0:
  Component Error
  Cannot read properties of undefined (reading 'getUserMedia')
  ```
-**Reason**: To record the audio, this component uses the `MediaDevices`` interface.  
+**Reason**: To record the audio, this component uses the `MediaDevices` interface.  
 For security reasons, the `getUserMedia()` method is available only in secure contexts (HTTPS), as explained in the
 [MDM documentation](https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia) :
 
