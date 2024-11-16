@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="streamlit-audiorecorder",
-    version="0.0.5",
+    version="0.0.6",
     author="Evann Courdier",
     author_email="",
     description="Audio recorder component for streamlit",

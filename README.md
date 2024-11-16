@@ -17,9 +17,20 @@ If all prompts are given as empty strings, the component will use the [react-aud
 #### Parameters
 The signature of the component is:
 ```python
-audiorecorder(start_prompt="Start recording", stop_prompt="Stop recording", pause_prompt="", show_visualizer=True, key=None):
+audiorecorder(
+    start_prompt="Start recording",
+    stop_prompt="Stop recording",
+    pause_prompt="",
+    custom_style={'color': 'black'},
+    start_style={},
+    pause_style={},
+    stop_style={},
+    show_visualizer=True,
+    key=None):
 ```
 The prompt parameters are self-explanatory.  
+The style parameters are dictionaries that allow you to customize the appearance of the buttons using CSS.
+The `custom_style` parameter is applied to all buttons, while the `start_style`, `pause_style`, and `stop_style` parameters are applied only to the corresponding button.  
 The optional `key` parameter is used internally by Streamlit to properly distinguish multiple audiorecorders on the page.  
 The `show_visualizer` parameter is a boolean that determines whether to show live audio visualization while recording. If set to False, the text "recording" is displayed. It is used only when all prompts are empty strings.
 

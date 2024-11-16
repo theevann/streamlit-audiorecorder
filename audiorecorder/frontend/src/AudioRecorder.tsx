@@ -21,7 +21,7 @@ function AudioRecorder(props: any) {
 
   const recorderControls = useAudioRecorder();
 
-  const useAudioRecorderVisualiser = props.args.start_prompt === "" && props.args.stop_prompt === "";
+  const useAudioRecorderVisualiser = props.args.startPrompt === "" && props.args.stopPrompt === "";
 
   const onRecordingComplete = async (blob: Blob) => {
     const audioDataStr = (await BlobToDataURL(blob)).replace(/^data:.+?base64,/, "");
@@ -64,7 +64,7 @@ function AudioRecorder(props: any) {
         className="btn btn-outline-secondary"
         style={{
           ...{
-            display: (!recorderControls.isRecording || props.args.pause_prompt !== "") ? "inline-block" : "none",
+            display: (!recorderControls.isRecording || props.args.pausePrompt !== "") ? "inline-block" : "none",
             marginBottom: "1px",
             marginRight: "10px",
             color: props.theme?.textColor,
@@ -78,7 +78,7 @@ function AudioRecorder(props: any) {
         onMouseEnter={() => setIsHoveredStart(true)}
         onMouseLeave={() => setIsHoveredStart(false)}
       >
-        {recorderControls.isRecording && !recorderControls.isPaused ? props.args.pause_prompt : props.args.start_prompt}
+        {recorderControls.isRecording && !recorderControls.isPaused ? props.args.pausePrompt : props.args.startPrompt}
       </button>
       <button
         onClick={recorderControls.stopRecording}
@@ -99,7 +99,7 @@ function AudioRecorder(props: any) {
         onMouseEnter={() => setIsHoveredStop(true)}
         onMouseLeave={() => setIsHoveredStop(false)}
       >
-        {props.args.stop_prompt}
+        {props.args.stopPrompt}
       </button>
     </span>
   ) : (
@@ -107,7 +107,7 @@ function AudioRecorder(props: any) {
         <AudioRecorderVisualiser
           onRecordingComplete={onRecordingComplete}
           recorderControls={recorderControls}
-          showVisualizer={props.args.show_visualizer}
+          showVisualizer={props.args.showVisualizer}
         />
       </div>
   );
