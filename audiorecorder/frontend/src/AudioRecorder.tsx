@@ -63,13 +63,17 @@ function AudioRecorder(props: any) {
         disabled={props.disabled}
         className="btn btn-outline-secondary"
         style={{
-          display: (!recorderControls.isRecording || props.args.pause_prompt !== "") ? "inline-block" : "none",
-          marginBottom: "1px",
-          marginRight: "10px",
-          color: props.theme?.textColor,
-          backgroundColor: isHoveredStart ? props.theme?.secondaryBackgroundColor : props.theme?.backgroundColor,
-          borderColor: props.theme?.textColor,
-          fontFamily: props.theme?.font,
+          ...{
+            display: (!recorderControls.isRecording || props.args.pause_prompt !== "") ? "inline-block" : "none",
+            marginBottom: "1px",
+            marginRight: "10px",
+            color: props.theme?.textColor,
+            backgroundColor: isHoveredStart ? props.theme?.secondaryBackgroundColor : props.theme?.backgroundColor,
+            borderColor: props.theme?.textColor,
+            fontFamily: props.theme?.font,
+          },
+          ...props.args.customStyle,
+          ...(recorderControls.isRecording && !recorderControls.isPaused ? props.args.pauseStyle : props.args.startStyle),
         }}
         onMouseEnter={() => setIsHoveredStart(true)}
         onMouseLeave={() => setIsHoveredStart(false)}
@@ -81,12 +85,16 @@ function AudioRecorder(props: any) {
         disabled={props.disabled || (!recorderControls.isRecording && !recorderControls.isPaused)}
         className="btn btn-outline-secondary"
         style={{
-          display: (recorderControls.isRecording || recorderControls.isPaused) ? "inline-block" : "none",
-          marginBottom: "1px",
-          color: props.theme?.textColor,
-          backgroundColor: isHoveredStop ? props.theme?.secondaryBackgroundColor : props.theme?.backgroundColor,
-          borderColor: props.theme?.textColor,
-          fontFamily: props.theme?.font,
+          ...{
+            display: (recorderControls.isRecording || recorderControls.isPaused) ? "inline-block" : "none",
+            marginBottom: "1px",
+            color: props.theme?.textColor,
+            backgroundColor: isHoveredStop ? props.theme?.secondaryBackgroundColor : props.theme?.backgroundColor,
+            borderColor: props.theme?.textColor,
+            fontFamily: props.theme?.font,
+          },
+          ...props.args.customStyle,
+          ...props.args.stopStyle,
         }}
         onMouseEnter={() => setIsHoveredStop(true)}
         onMouseLeave={() => setIsHoveredStop(false)}
